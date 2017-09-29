@@ -2,7 +2,7 @@
 
 namespace backend\controllers;
 
-use backend\models\shopInterface;
+use backend\models\ShopInterface;
 use Yii;
 use app\models\item;
 use app\models\shop;
@@ -15,7 +15,7 @@ use yii\filters\VerbFilter;
 /**
  * ItemController implements the CRUD actions for item model.
  */
-class ItemController extends Controller implements shopInterface
+class ItemController extends Controller implements ShopInterface
 {
 
     /**
