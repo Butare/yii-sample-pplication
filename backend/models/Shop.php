@@ -62,4 +62,16 @@ class Shop extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Item::className(), ['shopId' => 'id']);
     }
+
+
+    /**
+     * @return array|\yii\db\ActiveRecord[]
+     */
+    public function getShopNames()
+    {
+        return Shop::find()->select(['name'])->asArray()->all();
+
+        //return $shopName;
+
+    }
 }

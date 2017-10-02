@@ -2,22 +2,22 @@
 
 namespace backend\controllers;
 
-use backend\models\ShopInterface;
-use Yii;
 use app\models\item;
-use app\models\shop;
+use Yii;
+use app\models\ShopUser;
+use app\models\Shop;
 use yii\data\ActiveDataProvider;
-use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
+
 
 /**
- * ItemController implements the CRUD actions for item model.
+ * ShopUserController implements the CRUD actions for ShopUser model.
  */
-class ItemController extends Controller implements ShopInterface
+class ShopUserController extends Controller
 {
-
     /**
      * @inheritdoc
      */
@@ -34,22 +34,22 @@ class ItemController extends Controller implements ShopInterface
     }
 
     /**
-     * Lists all item models.
+     * Lists all ShopUser models.
      * @return mixed
      */
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => item::find(),
+            'query' => ShopUser::find(),
         ]);
 
         return $this->render('index', [
-            'dataProvider' => $dataProvider,// 'shopName'=> $this->getShopName()
+            'dataProvider' => $dataProvider,
         ]);
     }
 
     /**
-     * Displays a single item model.
+     * Displays a single ShopUser model.
      * @param integer $id
      * @return mixed
      */
@@ -61,28 +61,25 @@ class ItemController extends Controller implements ShopInterface
     }
 
     /**
-     * Creates a new item model.
+     * Creates a new ShopUser model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new item();
+        $model = new ShopUser();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
-
-            $shopList ="Okay";
-
             return $this->render('create', [
-                'model' => $model, 'shopList' => $this->getShop(),
+                'model' => $model, 'statusList' => ['Active', 'Inactive']
             ]);
         }
     }
 
     /**
-     * Updates an existing item model.
+     * Updates an existing ShopUser model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -95,13 +92,13 @@ class ItemController extends Controller implements ShopInterface
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [
-                'model' => $model, 'shopList' => $this->getShop()
+                'model' => $model,
             ]);
         }
     }
 
     /**
-     * Deletes an existing item model.
+     * Deletes an existing ShopUser model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -114,34 +111,23 @@ class ItemController extends Controller implements ShopInterface
     }
 
     /**
-     * Finds the item model based on its primary key value.
+     * Finds the ShopUser model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return item the loaded model
+     * @return ShopUser the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = item::findOne($id)) !== null) {
+        if (($model = ShopUser::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
 
-    /**
-     * @return array
-     */
     public function getShop() {
         $shopList = ArrayHelper::map(Shop::find()->all(), 'id', 'name');
         return $shopList;
-    }
-
-    public function getShopNames()
-    {
-//        $shopName = Shop::find()->select(['name']);
-//
-//        return $shopName;
-
     }
 }

@@ -12,5 +12,5 @@ namespace backend\models;
 interface shopInterface
 {
     public function getShop();
-    public function getShopName($id);
+    public function getShopNames();
 }
