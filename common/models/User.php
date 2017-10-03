@@ -195,7 +195,7 @@ class User extends ActiveRecord implements IdentityInterface
      * @return string 'name'|'null'
      */
     public function getShopName(){
-        // return the the shop name if the shop id exists
-        return ( $this->shopId ? Shop::findOne(['id' => $this->shopId])->name : "null");
+        // return the shop name if the shop id exists
+        return ( $this->shopId ) ? (Shop::findOne(['id' => $this->shopId])->name) : "null";
     }
 }
