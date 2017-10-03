@@ -5,13 +5,17 @@ use Yii;
 use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
+use yii\db\Exception;
 use yii\web\IdentityInterface;
+use app\models\Shop;
 
 /**
  * User model
  *
  * @property integer $id
  * @property string $username
+ * @property string $role
+ * @property integer $shopId
  * @property string $password_hash
  * @property string $password_reset_token
  * @property string $email
@@ -185,5 +189,13 @@ class User extends ActiveRecord implements IdentityInterface
     public function removePasswordResetToken()
     {
         $this->password_reset_token = null;
+    }
+
+    /**
+     * @return string 'name'|'null'
+     */
+    public function getShopName(){
+        // return the the shop name if the shop id exists
+        return ( $this->shopId ? Shop::findOne(['id' => $this->shopId])->name : "null");
     }
 }

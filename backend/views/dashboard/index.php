@@ -8,7 +8,6 @@ use yii\helpers\Html;
     <title>Multi-tenant shop</title>
 </head>
 
-<body style="padding-top: 50px;">
     <?php echo "<h1> Welcome to the Multi-tenant shop  </h1>";
     ?>
 
@@ -24,9 +23,6 @@ use yii\helpers\Html;
 
         <?php } ?>
 </div>
-
-
-</body>
 
 </html>
 

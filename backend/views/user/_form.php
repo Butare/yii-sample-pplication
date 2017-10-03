@@ -2,6 +2,8 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use \yii\helpers\ArrayHelper;
+use app\models\Shop;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\user */
@@ -13,6 +15,12 @@ use yii\widgets\ActiveForm;
     <?php $form = ActiveForm::begin(); ?>
 
     <?= $form->field($model, 'username')->textInput(['maxlength' => true]) ?>
+
+    <?= $form->field($model, 'role')->dropDownList(['Admin' => 'Admin' , 'User' => 'User'], ['prompt' => 'Select...']) ?>
+
+    <?= $form->field($model, 'shopId')->dropDownList(
+
+        ArrayHelper::map(Shop::find()->all(), 'id', 'name'),['prompt' => 'Select...']) ?>
 
     <?= $form->field($model, 'auth_key')->textInput(['maxlength' => true]) ?>
 

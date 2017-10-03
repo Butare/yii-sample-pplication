@@ -2,8 +2,9 @@
 
 namespace backend\controllers;
 
+use app\models\CreateuserForm;
 use Yii;
-use app\models\user;
+use common\models\User;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -23,7 +24,7 @@ class UserController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['create', 'update', 'delete'],
+                'only' => ['create', 'update', 'delete', 'add'],
                 'rules' => [
                     [
                         'allow' => true,
@@ -49,12 +50,14 @@ class UserController extends Controller
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => user::find(),
+            'query' => User::find(),
         ]);
 
         return $this->render('index', [
             'dataProvider' => $dataProvider,
         ]);
+
+        // possible error -> $dataprovider doesnt match with the model data.
     }
 
     /**
@@ -74,14 +77,15 @@ class UserController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
+    public function actionAdd()
     {
-        $model = new user();
+        $model = new CreateuserForm();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($model->load(Yii::$app->request->post()) && $model->createUser()) {
+            //return $this->redirect(['index']);
+           return  $this->actionIndex();
         } else {
-            return $this->render('create', [
+            return $this->render('add', [
                 'model' => $model,
             ]);
         }

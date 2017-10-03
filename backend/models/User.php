@@ -9,6 +9,8 @@ use Yii;
  *
  * @property integer $id
  * @property string $username
+ * @property string $role
+ * @property integer $shopId
  * @property string $auth_key
  * @property string $password_hash
  * @property string $password_reset_token
@@ -16,6 +18,8 @@ use Yii;
  * @property integer $status
  * @property integer $created_at
  * @property integer $updated_at
+ *
+ * @property Shop $shop
  */
 class User extends \yii\db\ActiveRecord
 {
@@ -33,13 +37,14 @@ class User extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['username', 'auth_key', 'password_hash', 'email', 'created_at', 'updated_at'], 'required'],
-            [['status', 'created_at', 'updated_at'], 'integer'],
-            [['username', 'password_hash', 'password_reset_token', 'email'], 'string', 'max' => 255],
+            [['username', 'role', 'auth_key', 'password_hash', 'email', 'created_at', 'updated_at'], 'required'],
+            [['shopId', 'status', 'created_at', 'updated_at'], 'integer'],
+            [['username', 'role', 'password_hash', 'password_reset_token', 'email'], 'string', 'max' => 255],
             [['auth_key'], 'string', 'max' => 32],
             [['username'], 'unique'],
             [['email'], 'unique'],
             [['password_reset_token'], 'unique'],
+            [['shopId'], 'exist', 'skipOnError' => true, 'targetClass' => Shop::className(), 'targetAttribute' => ['shopId' => 'id']],
         ];
     }
 
@@ -51,6 +56,8 @@ class User extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'username' => 'Username',
+            'role' => 'Role',
+            'shopId' => 'Shop ID',
             'auth_key' => 'Auth Key',
             'password_hash' => 'Password Hash',
             'password_reset_token' => 'Password Reset Token',
@@ -60,4 +67,14 @@ class User extends \yii\db\ActiveRecord
             'updated_at' => 'Updated At',
         ];
     }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getShop()
+    {
+        return $this->hasOne(Shop::className(), ['id' => 'shopId']);
+    }
+
+
 }

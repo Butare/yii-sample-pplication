@@ -23,7 +23,8 @@ AppAsset::register($this);
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
 </head>
-<body>
+
+<body style="padding-top: 50px;">
 <?php $this->beginBody() ?>
 
 <div class="wrap">
@@ -40,8 +41,7 @@ AppAsset::register($this);
     ];
 
     if (Yii::$app->user->isGuest) {
-        $menuItems[] = ['label' => 'Admin', 'url' => ['/site/login']];
-        $menuItems[] = ['label' => 'User', 'url' => ['/dashboard/login']];
+        $menuItems[] = ['label' => 'Login', 'url' => ['/dashboard/login']];
     } else {
         $menuItems[] = '<li>'
             . Html::beginForm(['/site/logout'], 'post')
