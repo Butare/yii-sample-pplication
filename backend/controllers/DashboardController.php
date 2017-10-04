@@ -46,11 +46,15 @@ class DashboardController extends Controller
     }
 
 
-    public function actions()
-    {
-        return [
-            'error' => ['yii\web\ErrorAction'],
-        ];
+//    public function actions()
+//    {
+//        return [
+//            'error' => ['yii\web\ErrorAction'],
+//        ];
+//    }
+
+    public function actionError() {
+        return $this->render('error');
     }
 
 

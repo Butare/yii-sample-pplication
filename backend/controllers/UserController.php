@@ -16,11 +16,15 @@ use yii\filters\VerbFilter;
  */
 class UserController extends Controller
 {
+
+    private $current_user_shop_id;
     /**
      * @inheritdoc
      */
     public function behaviors()
     {
+        $this->current_user_shop_id = Yii::$app->user->identity;
+
         return [
             'access' => [
                 'class' => AccessControl::className(),
@@ -49,6 +53,7 @@ class UserController extends Controller
      */
     public function actionIndex()
     {
+
         $dataProvider = new ActiveDataProvider([
             'query' => User::find(),
         ]);
@@ -57,7 +62,6 @@ class UserController extends Controller
             'dataProvider' => $dataProvider,
         ]);
 
-        // possible error -> $dataprovider doesnt match with the model data.
     }
 
     /**
@@ -79,7 +83,13 @@ class UserController extends Controller
      */
     public function actionAdd()
     {
+
         $model = new CreateuserForm();
+
+//        if (!$model->shopId) {
+//            $message = "Sorry you can not create a user!";
+//            return $this->redirect(['dashboard/error']);
+//        }
 
         if ($model->load(Yii::$app->request->post()) && $model->createUser()) {
             //return $this->redirect(['index']);

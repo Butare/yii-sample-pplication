@@ -11,6 +11,7 @@ use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
 
 /**
  * ItemController implements the CRUD actions for item model.
@@ -18,12 +19,30 @@ use yii\filters\VerbFilter;
 class ItemController extends Controller implements ShopInterface
 {
 
+    private $current_user_shop_id;
+    private $access_denied_msg;
+
     /**
      * @inheritdoc
      */
     public function behaviors()
     {
+        $this->current_user_shop_id = Yii::$app->user->identity;
+
         return [
+
+            'access' => [
+                'class' => AccessControl::className(),
+                'only' => ['create', 'update', 'delete', 'add'],
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' =>['@'],
+                    ],
+
+                ],
+            ],
+
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -37,14 +56,14 @@ class ItemController extends Controller implements ShopInterface
      * Lists all item models.
      * @return mixed
      */
-    public function actionIndex()
+    public function actionIndex($accessErrorMsg = null)
     {
         $dataProvider = new ActiveDataProvider([
             'query' => item::find(),
         ]);
 
         return $this->render('index', [
-            'dataProvider' => $dataProvider,// 'shopName'=> $this->getShopName()
+            'dataProvider' => $dataProvider, 'message' => $accessErrorMsg
         ]);
     }
 
@@ -67,14 +86,26 @@ class ItemController extends Controller implements ShopInterface
      */
     public function actionCreate()
     {
+
+
+        // let only the shop owner be able to create the shop.
+
+        $shopModel = null;
+
+        if ($this->current_user_shop_id->shopId) {
+             $shopModel = Shop::findOne(['id' =>$this->current_user_shop_id->shopId]);
+         }
+
+        if (!$shopModel){
+            return $this->actionIndex("Sorry, Access Permission Denied");
+        }
+
         $model = new item();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
+
         } else {
-
-            $shopList ="Okay";
-
             return $this->render('create', [
                 'model' => $model, 'shopList' => $this->getShop(),
             ]);
@@ -90,6 +121,13 @@ class ItemController extends Controller implements ShopInterface
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+
+        if ($model->shopId)
+            Yii::trace($this->current_user_shop_id->shopId, 'debug');
+
+        if (!$model->shopId || $this->current_user_shop_id->shopId != $model->shopId){
+            return $this->actionIndex("Sorry, Access Permission Denied");
+        }
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -108,7 +146,12 @@ class ItemController extends Controller implements ShopInterface
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+
+        if (!$model->shopId || $this->current_user_shop_id->shopId != $model->shopId){
+            return $this->actionIndex("Sorry, Access Permission Denied");
+        }
+        $this->$model->delete();
 
         return $this->redirect(['index']);
     }
@@ -144,4 +187,5 @@ class ItemController extends Controller implements ShopInterface
 //        return $shopName;
 
     }
+
 }
