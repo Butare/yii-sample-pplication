@@ -17,9 +17,10 @@ use yii\helpers\Html;
 
         $arr = new \app\models\Shop();
 
+        // get shop names and their ids
         foreach( $arr->getShopNames() as $ar) {   ?>
 
-            <?= Html::a($ar['name'], ['//'], ['class' => 'btn btn-primary btn-block']) ?>
+            <?= Html::a($ar['name'], ['/item/list?'.$ar['id']], ['class' => 'btn btn-primary btn-block']) ?>
 
         <?php } ?>
 </div>

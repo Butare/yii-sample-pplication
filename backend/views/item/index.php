@@ -2,6 +2,8 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\helpers\ArrayHelper;
+use yii\grid\ActionColumn;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -13,11 +15,17 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
+    <?php
+
+    if ($isShopOwner) {?>
     <p style="color: red">
         <?= Html::a('Create Item', ['create'], ['class' => 'btn btn-success']) ?>
         <?= Html::encode($message)?>
     </p>
-    <?= GridView::widget([
+    <?php } ?>
+
+    <?php
+        $options = [
         'dataProvider' => $dataProvider,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
@@ -41,10 +49,18 @@ $this->params['breadcrumbs'][] = $this->title;
                     return  number_format($item->quantity);
                 },
             ],
-            // 'created_at',
-            // 'updated_at',
+               [
+                   'class' => 'yii\grid\ActionColumn',
+                   'visible' => Yii::$app->user->isGuest ?  // for customers
+                       false : (!Yii::$app->user->identity->shopId ?    // for admins (some problems)
+                           false:(Yii::$app->request->queryString != Yii::$app->user->identity->shopId)? // for shop users
+                               false:true ),
+               ],
 
-            ['class' => 'yii\grid\ActionColumn'],
         ],
-    ]); ?>
+        ];
+    ?>
+
+        <?= GridView::widget($options) ?>
 </div>
+

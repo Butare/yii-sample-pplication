@@ -53,18 +53,25 @@ class ItemController extends Controller implements ShopInterface
     }
 
     /**
-     * Lists all item models.
+     * Lists all item models for a shop user.
      * @return mixed
      */
-    public function actionIndex($accessErrorMsg = null)
+    public function actionIndex($accessErrorMsg = null, $isShopOwner = false)
     {
+        if (Yii::$app->user->isGuest || !$this->current_user_shop_id->shopId) {
+            return $this->goHome();
+        }
+
+        $shopId = $this->current_user_shop_id->shopId;
+
         $dataProvider = new ActiveDataProvider([
-            'query' => item::find(),
+            'query' => $this->getItemByShopId($shopId),
         ]);
 
         return $this->render('index', [
-            'dataProvider' => $dataProvider, 'message' => $accessErrorMsg
+            'dataProvider' => $dataProvider, 'message' => $accessErrorMsg, 'isShopOwner' => $isShopOwner
         ]);
+
     }
 
     /**
@@ -102,6 +109,8 @@ class ItemController extends Controller implements ShopInterface
 
         $model = new item();
 
+        $model ->shopId = $this->current_user_shop_id->shopId;
+
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
 
@@ -126,7 +135,8 @@ class ItemController extends Controller implements ShopInterface
             Yii::trace($this->current_user_shop_id->shopId, 'debug');
 
         if (!$model->shopId || $this->current_user_shop_id->shopId != $model->shopId){
-            return $this->actionIndex("Sorry, Access Permission Denied");
+            $message = "Sorry, Access Permission Denied, Please try again.";
+            return $this->actionIndex($message);
         }
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -155,6 +165,34 @@ class ItemController extends Controller implements ShopInterface
 
         return $this->redirect(['index']);
     }
+
+
+
+    // get items list by shop model's id
+    public function actionList($message = null) {
+
+        $isShopOwner = false;
+
+        // get shopId from query string
+        $shopId = Yii::$app->request->queryString;
+
+        if (!Yii::$app->user->isGuest && $this->current_user_shop_id->shopId) {
+
+            // check whether the shopId of clicked shop and the login user match
+            $isShopOwner = ($shopId == $this->current_user_shop_id->shopId) ? true : false;
+
+        }
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $this->getItemByShopId($shopId),
+        ]);
+
+        return $this->render('index', [
+            'dataProvider' => $dataProvider, 'message' => $message, 'isShopOwner' => $isShopOwner
+        ]);
+
+    }
+
 
     /**
      * Finds the item model based on its primary key value.
@@ -187,5 +225,13 @@ class ItemController extends Controller implements ShopInterface
 //        return $shopName;
 
     }
+
+    // get all items in a given shop
+    public function getItemByShopId($shopId) {
+
+        return item::find()->where(['shopId' => $shopId]);
+
+    }
+
 
 }

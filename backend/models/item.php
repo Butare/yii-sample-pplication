@@ -33,7 +33,7 @@ class item extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['shopId', 'name'], 'required'],
+            [['name'], 'required'],
             [['shopId', 'quantity'], 'integer'],
             [['price'], 'number'],
             [['created_at', 'updated_at'], 'safe'],
@@ -73,10 +73,5 @@ class item extends \yii\db\ActiveRecord
         return Shop::findOne(['id' => $this->shopId])->name;
     }
 
-
-    // function to select all items in a particular shop similar to the users shopId
-//    public function getItemByShopId($shopId) {
-//        return item::find()
-//    }
 
 }

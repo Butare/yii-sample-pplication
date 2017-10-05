@@ -23,11 +23,14 @@ use \app\models\Shop;
 
     <?php $form = ActiveForm::begin(); ?>
 
-         <?= $form->field($model, 'shopId')->dropDownList(
+         <!--?= $form->field($model, 'shopId')->dropDownList(
                     //ArrayHelper::map(Shop::find()->all(), 'id', 'name')
             $shopList, ['prompt' => 'Select shop']
 
-            )?>
+            )? -->
+
+    <!--?= $form->field($model, 'shopId')->textarea(['value' => '232', 'readonly' =>true]) ? -->
+
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'price')->textInput() ?>

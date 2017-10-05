@@ -69,7 +69,7 @@ class Shop extends \yii\db\ActiveRecord
      */
     public function getShopNames()
     {
-        return Shop::find()->select(['name'])->asArray()->all();
+        return Shop::find()->select(['name', 'id'])->asArray()->all();
 
         //return $shopName;
 
