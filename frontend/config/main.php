@@ -36,14 +36,23 @@ return [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
-        /*
+
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
+            'hostInfo' => 'http://y2aa-backend.dev',
             'rules' => [
             ],
         ],
-        */
+//
+//        'urlManagerBackend' => [
+//            'enablePrettyUrl' => true,
+//            'showScriptName' => false,
+//            'class' => 'yii\web\UrlManager',
+//            'hostInfo' => 'http://y2aa-frontend.dev',
+//            'baseUrl' => 'http://y2aa-backend.dev',
+//        ]
+
     ],
     'params' => $params,
 ];

@@ -12,6 +12,7 @@ use frontend\models\PasswordResetRequestForm;
 use frontend\models\ResetPasswordForm;
 use frontend\models\SignupForm;
 use frontend\models\ContactForm;
+use yii\data\ActiveDataProvider;
 
 /**
  * Site controller
@@ -75,6 +76,12 @@ class SiteController extends Controller
         return $this->render('index');
     }
 
+
+    public function actionHome()
+    {
+        return $this->render('home');
+    }
+
     /**
      * Logs in a user.
      *
@@ -85,6 +92,7 @@ class SiteController extends Controller
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
         }
+
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
@@ -210,4 +218,31 @@ class SiteController extends Controller
             'model' => $model,
         ]);
     }
+
+
+    // get items list by shop model's id
+    public function actionList($message = null) {
+
+        $isShopOwner = false;
+
+        // get shopId from query string
+        $shopId = Yii::$app->request->queryString;
+
+        if (!Yii::$app->user->isGuest && $this->current_user_shop_id->shopId) {
+
+            // check whether the shopId of clicked shop and the login user match
+            $isShopOwner = ($shopId == $this->current_user_shop_id->shopId) ? true : false;
+
+        }
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $this->getItemByShopId($shopId),
+        ]);
+
+        return $this->render('index', [
+            'dataProvider' => $dataProvider, 'message' => $message, 'isShopOwner' => $isShopOwner
+        ]);
+
+    }
+
 }

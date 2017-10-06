@@ -198,4 +198,9 @@ class User extends ActiveRecord implements IdentityInterface
         // return the shop name if the shop id exists
         return ( $this->shopId ) ? (Shop::findOne(['id' => $this->shopId])->name) : "null";
     }
+
+//    public function shouldDisplayShop($shopId){
+//        return ($shopId == Yii::$app->user->identity->shopId) ? true : false;
+//    }
+
 }

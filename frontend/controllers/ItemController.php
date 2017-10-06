@@ -1,11 +1,11 @@
 <?php
 
-namespace backend\controllers;
+namespace frontend\controllers;
 
 use backend\models\ShopInterface;
 use Yii;
-use app\models\item;
-use app\models\shop;
+use common\models\item;
+use common\models\shop;
 use yii\data\ActiveDataProvider;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
@@ -16,7 +16,7 @@ use yii\filters\AccessControl;
 /**
  * ItemController implements the CRUD actions for item model.
  */
-class ItemController extends Controller implements ShopInterface
+class ItemController extends Controller
 {
 
     private $current_user_shop_id;
@@ -66,7 +66,7 @@ class ItemController extends Controller implements ShopInterface
         $isShopOwner = true;
 
         $dataProvider = new ActiveDataProvider([
-            'query' => $this->getItemByShopId($shopId),
+            'query' => item::getItemByShopId($shopId),
         ]);
 
         return $this->render('index', [
@@ -184,7 +184,7 @@ class ItemController extends Controller implements ShopInterface
         }
 
         $dataProvider = new ActiveDataProvider([
-            'query' => $this->getItemByShopId($shopId),
+            'query' => item::getItemByShopId($shopId),
         ]);
 
         return $this->render('index', [
@@ -209,29 +209,4 @@ class ItemController extends Controller implements ShopInterface
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
-
-    /**
-     * @return array
-     */
-    public function getShop() {
-        $shopList = ArrayHelper::map(Shop::find()->all(), 'id', 'name');
-        return $shopList;
-    }
-
-    public function getShopNames()
-    {
-//        $shopName = Shop::find()->select(['name']);
-//
-//        return $shopName;
-
-    }
-
-    // get all items in a given shop
-    public function getItemByShopId($shopId) {
-
-        return item::find()->where(['shopId' => $shopId]);
-
-    }
-
-
 }

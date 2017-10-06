@@ -12,15 +12,6 @@ use \app\models\Shop;
 
 <div class="item-form">
 
-    <?php
-    $arr = [
-          ['id' => '123', 'name' =>'aab'],
-          ['id' => '456', 'name' =>'kigali']
-    ];
-
-    $result =ArrayHelper::map($arr, 'id', 'name');
-    ?>
-
     <?php $form = ActiveForm::begin(); ?>
 
          <!--?= $form->field($model, 'shopId')->dropDownList(
@@ -28,8 +19,6 @@ use \app\models\Shop;
             $shopList, ['prompt' => 'Select shop']
 
             )? -->
-
-    <!--?= $form->field($model, 'shopId')->textarea(['value' => '232', 'readonly' =>true]) ? -->
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 

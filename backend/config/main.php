@@ -46,6 +46,13 @@ return [
             ],
         ],
 
+//        'urlManagerBackend' => [
+//            'class' => 'yii\web\urlManager',
+//            'baseUrl' => 'http://y2aa-frontend.dev',
+//            'enablePrettyUrl' => true,
+//            'showScriptName' => false,
+//        ],
+
     ],
     'params' => $params,
 ];

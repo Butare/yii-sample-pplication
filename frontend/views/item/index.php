@@ -16,15 +16,6 @@ $this->title = 'Items';
     <h1><?= Html::encode($this->title) ?></h1>
 
     <?php
-
-    if ($isShopOwner) {?>
-    <p style="color: red">
-        <?= Html::a('Create Item', ['create'], ['class' => 'btn btn-success']) ?>
-        <?= Html::encode($message)?>
-    </p>
-    <?php } ?>
-
-    <?php
         $options = [
         'dataProvider' => $dataProvider,
         'columns' => [
@@ -35,7 +26,7 @@ $this->title = 'Items';
             ['class' => 'yii\grid\DataColumn',
                 'attribute' => 'shopName',
                 'format' => 'text',
-                'value' => function(\app\models\item $item){
+                'value' => function(\common\models\item $item){
                     return  $item->getShopName();
                 },
             ],
@@ -45,7 +36,7 @@ $this->title = 'Items';
             ['class' => 'yii\grid\DataColumn',
                 'attribute' => 'quantity',
                 'format' => 'text',
-                'value' => function(\app\models\item $item){
+                'value' => function(\common\models\item $item){
                     return  number_format($item->quantity);
                 },
             ],
