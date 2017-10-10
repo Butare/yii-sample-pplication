@@ -7,7 +7,7 @@ use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\db\Exception;
 use yii\web\IdentityInterface;
-use app\models\Shop;
+//use common\models\shop;
 
 /**
  * User model

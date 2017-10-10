@@ -35,7 +35,7 @@ $this->title = 'Items';
             ['class' => 'yii\grid\DataColumn',
                 'attribute' => 'shopName',
                 'format' => 'text',
-                'value' => function(\app\models\item $item){
+                'value' => function(\common\models\item $item){
                     return  $item->getShopName();
                 },
             ],
@@ -45,7 +45,7 @@ $this->title = 'Items';
             ['class' => 'yii\grid\DataColumn',
                 'attribute' => 'quantity',
                 'format' => 'text',
-                'value' => function(\app\models\item $item){
+                'value' => function(\common\models\item $item){
                     return  number_format($item->quantity);
                 },
             ],
@@ -60,4 +60,3 @@ $this->title = 'Items';
 
         <?= GridView::widget($options) ?>
 </div>
-

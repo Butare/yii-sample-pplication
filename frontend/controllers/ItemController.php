@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use backend\models\ShopInterface;
+use common\models\UploadForm;
 use Yii;
 use common\models\item;
 use common\models\shop;
@@ -188,7 +189,7 @@ class ItemController extends Controller
         ]);
 
         return $this->render('index', [
-            'dataProvider' => $dataProvider, 'message' => $message, 'isShopOwner' => $isShopOwner
+            'dataProvider' => $dataProvider, 'message' => $message, 'isShopOwner' => $isShopOwner , 'imgSrc' =>UploadForm::getImagePath()
         ]);
 
     }
@@ -209,4 +210,6 @@ class ItemController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
+
 }

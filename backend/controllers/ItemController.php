@@ -4,8 +4,8 @@ namespace backend\controllers;
 
 use backend\models\ShopInterface;
 use Yii;
-use app\models\item;
-use app\models\shop;
+use common\models\item;
+use common\models\shop;
 use yii\data\ActiveDataProvider;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;

@@ -15,7 +15,7 @@ use yii\helpers\Html;
 
     <?php
 
-        $arr = new \app\models\Shop();
+        $arr = new \common\models\Shop();
 
         // get shop names and their ids
         foreach( $arr->getShopNames() as $ar) {   ?>

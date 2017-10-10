@@ -230,7 +230,7 @@ class SiteController extends Controller
 
         if (!Yii::$app->user->isGuest && $this->current_user_shop_id->shopId) {
 
-            // check whether the shopId of clicked shop and the login user match
+            // check whether the shopId of clicked shop belongs to the login user
             $isShopOwner = ($shopId == $this->current_user_shop_id->shopId) ? true : false;
 
         }

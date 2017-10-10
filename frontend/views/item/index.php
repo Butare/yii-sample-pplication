@@ -10,10 +10,13 @@ use yii\grid\ActionColumn;
 
 $this->title = 'Items';
 //$this->params['breadcrumbs'][] = $this->title;
+
 ?>
 <div class="item-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
+
+    <h4><?=Html::a('Upload', '/upload/upload') ?></h4>
 
     <?php
         $options = [
@@ -40,11 +43,31 @@ $this->title = 'Items';
                     return  number_format($item->quantity);
                 },
             ],
-               [
-                   'class' => 'yii\grid\ActionColumn',
-                    'visible' => $isShopOwner
-               ],
+//               [
+//                   'class' => 'yii\grid\ActionColumn',
+//                    'visible' => $isShopOwner
+//               ],
 
+        [
+                'attribute' => 'Image',
+                'format' => 'raw',
+                'value' => function() {
+                    return '<img src=" '.Yii::getAlias('/images/Rukacarara.png').' " width="50px" height="auto"/>';
+
+                },
+        ],
+
+        [
+                'class' => 'yii\grid\ActionColumn',
+                'template' => '{view}',
+                'buttons' => [
+                        'view' => function( $url, $model) {
+                            return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', $url, [
+                                    'title' => Yii::t('yii', 'view'),
+                            ]);
+                        }
+                ]
+        ],
         ],
         ];
     ?>
