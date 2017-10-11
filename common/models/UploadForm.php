@@ -29,6 +29,7 @@ class UploadForm extends Model
     public  function upload() {
         if ($this->validate()) {
             $this->imageFile->saveAs(Yii::getAlias('@common/images/'. $this->imageFile->baseName . '.' .$this->imageFile->extension));
+            Yii::trace("The image instance in saveAs : $this->imageFile", 'debug');
             return true;
         } else {
             return false;

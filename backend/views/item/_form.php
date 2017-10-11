@@ -12,7 +12,7 @@ use \app\models\Shop;
 
 <div class="item-form">
 
-    <?php $form = ActiveForm::begin(); ?>
+    <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
 
          <!--?= $form->field($model, 'shopId')->dropDownList(
                     //ArrayHelper::map(Shop::find()->all(), 'id', 'name')
@@ -25,6 +25,8 @@ use \app\models\Shop;
     <?= $form->field($model, 'price')->textInput() ?>
 
     <?= $form->field($model, 'quantity')->textInput() ?>
+
+    <?= $form->field($model, 'imagename')->fileInput() ?>
 
     <?= $form->field($model, 'created_at')->textInput() ?>
 

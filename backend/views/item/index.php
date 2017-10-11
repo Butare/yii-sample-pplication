@@ -49,6 +49,18 @@ $this->title = 'Items';
                     return  number_format($item->quantity);
                 },
             ],
+            'imagename',
+            [
+                'attribute' => 'Image',
+                'format' => 'raw',
+                'value' => function() {
+                    //return '<img src="imgSrc" width="50px" height="auto"/>';
+                    //return "<?= Yii::$app->request->baseUrl";
+                    return '<img src="'.Yii::$app->request->baseUrl.'/images/images/Rukacarara.png" width="50px" height="auto"/>';
+
+
+                },
+            ],
                [
                    'class' => 'yii\grid\ActionColumn',
                     'visible' => $isShopOwner

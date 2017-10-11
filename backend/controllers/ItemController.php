@@ -12,6 +12,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+use yii\web\UploadedFile;
 
 /**
  * ItemController implements the CRUD actions for item model.
@@ -111,7 +112,16 @@ class ItemController extends Controller implements ShopInterface
 
         $model ->shopId = $this->current_user_shop_id->shopId;
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post()) ) {
+
+            $model->imagename = UploadedFile::getInstance($model, 'imagename');
+            Yii::trace("the image name is : ".$model->imagename, 'debug');
+
+            // save model first, then upload it.
+            $model->save();
+            $model->upload();
+
+
             return $this->redirect(['view', 'id' => $model->id]);
 
         } else {

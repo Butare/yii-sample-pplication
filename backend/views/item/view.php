@@ -41,6 +41,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'name',
             'price',
             'quantity',
+            'imagename',
             'created_at',
             'updated_at',
         ],

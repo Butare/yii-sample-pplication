@@ -23,7 +23,10 @@ class UploadController extends Controller
         $model = new UploadForm();
 
         if (Yii::$app->request->isPost) {
+
             $model->imageFile = UploadedFile::getInstance($model, 'imageFile');
+
+            Yii::trace("The image instance is : $model->imageFile", 'debug');
 
             if ($model->upload()) {
                 $message = "successfully uploaded";

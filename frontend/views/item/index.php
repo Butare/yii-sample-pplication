@@ -52,7 +52,9 @@ $this->title = 'Items';
                 'attribute' => 'Image',
                 'format' => 'raw',
                 'value' => function() {
-                    return '<img src=" '.Yii::getAlias('/images/Rukacarara.png').' " width="50px" height="auto"/>';
+                    //return '<img src="imgSrc" width="50px" height="auto"/>';
+                    //return "<?= Yii::$app->request->baseUrl";
+                    return '<img src="/images/Rukacarara.png" width="50px" height="auto"/>';
 
                 },
         ],
