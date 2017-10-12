@@ -20,23 +20,34 @@ class UploadForm extends Model
      */
     public $imageFile;
 
-    function rules() {
+    function rules()
+    {
         return [
-            [['imageFile'], 'file' , 'skipOnEmpty' => false, 'extensions' => 'png, jpg'],
+            [['imageFile'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg'],
         ];
     }
 
-    public  function upload() {
+
+    /**
+     * @param $name  -- new item name formatted as - 'itemId'
+     * @return bool
+     */
+    public function upload($name)
+    {
         if ($this->validate()) {
-            $this->imageFile->saveAs(Yii::getAlias('@common/images/'. $this->imageFile->baseName . '.' .$this->imageFile->extension));
-            Yii::trace("The image instance in saveAs : $this->imageFile", 'debug');
+
+            $this->imageFile->saveAs
+            (
+                Yii::getAlias('@common') .
+                DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR .
+                $name . '.' . $this->imageFile->extension
+            );
+
             return true;
+
         } else {
             return false;
         }
     }
 
-    public static function getImagePath() {
-        return '/common/images/Rukacarara.png';
-    }
 }

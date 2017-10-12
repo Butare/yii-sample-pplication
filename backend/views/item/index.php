@@ -51,14 +51,10 @@ $this->title = 'Items';
             ],
             'imagename',
             [
-                'attribute' => 'Image',
+                'attribute' => 'Image name',
                 'format' => 'raw',
-                'value' => function() {
-                    //return '<img src="imgSrc" width="50px" height="auto"/>';
-                    //return "<?= Yii::$app->request->baseUrl";
-                    return '<img src="'.Yii::$app->request->baseUrl.'/images/images/Rukacarara.png" width="50px" height="auto"/>';
-
-
+                'value' => function(\common\models\item $item) {
+                    return '<img src="image?filename='.$item->imagename.'" width="50x" height="50px" >';
                 },
             ],
                [

@@ -28,7 +28,7 @@ class UploadController extends Controller
 
             Yii::trace("The image instance is : $model->imageFile", 'debug');
 
-            if ($model->upload()) {
+            if ($model->upload($id = null)) {
                 $message = "successfully uploaded";
             } else {
                 $message = "Not uploaded";

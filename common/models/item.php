@@ -1,6 +1,7 @@
 <?php
 
 namespace common\models;
+
 use Yii;
 
 /**
@@ -18,6 +19,7 @@ use Yii;
  */
 class item extends \yii\db\ActiveRecord
 {
+
     /**
      * @inheritdoc
      */
@@ -37,7 +39,7 @@ class item extends \yii\db\ActiveRecord
             [['price'], 'number'],
             [['created_at', 'updated_at'], 'safe'],
             [['name'], 'string', 'max' => 100],
-            [['imagename'], 'file', 'skipOnEmpty' => false, 'extensions' =>'png, jpg'],
+            [['imagename'], 'string', 'skipOnEmpty' => true, 'max' => 255],
             [['shopId'], 'exist', 'skipOnError' => true, 'targetClass' => Shop::className(), 'targetAttribute' => ['shopId' => 'id']],
         ];
     }
@@ -70,7 +72,8 @@ class item extends \yii\db\ActiveRecord
     /**
      * @return static
      */
-    public function getShopName(){
+    public function getShopName()
+    {
         return Shop::findOne(['id' => $this->shopId])->name;
     }
 
@@ -80,17 +83,28 @@ class item extends \yii\db\ActiveRecord
      * @param $shopId
      * @return $this
      */
-    public static function getItemByShopId($shopId) {
+    public static function getItemByShopId($shopId)
+    {
         return item::find()->where(['shopId' => $shopId]);
     }
 
 
-    // upload image of an item
-    public  function upload() {
+    // upload image of an item, renamed to the item id
+    public function upload($name)
+    {
         if ($this->validate()) {
-            $this->imagename->saveAs(Yii::getAlias('@common/images/'. $this->imagename->baseName . '.' .$this->imagename->extension));
-            Yii::trace("The image instance in saveAs : $this->imagename", 'debug');
+
+            $this->imagename->saveAs
+            (
+                Yii::getAlias('@common') .
+                DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR .
+                $name . '.' . $this->imagename->extension
+            );
+
+            Yii::trace("image name upload item  : $name", 'debug');
+
             return true;
+
         } else {
             return false;
         }

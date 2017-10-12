@@ -26,7 +26,9 @@ use \app\models\Shop;
 
     <?= $form->field($model, 'quantity')->textInput() ?>
 
-    <?= $form->field($model, 'imagename')->fileInput() ?>
+    <?= $form->field($uploadModel, 'imageFile')->fileInput() ?>
+
+    <!--?= $form->field($model, 'imagename')->fileInput() ? -->
 
     <?= $form->field($model, 'created_at')->textInput() ?>
 

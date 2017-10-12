@@ -3,6 +3,7 @@
 namespace backend\controllers;
 
 use backend\models\ShopInterface;
+use common\models\UploadForm;
 use Yii;
 use common\models\item;
 use common\models\shop;
@@ -34,11 +35,11 @@ class ItemController extends Controller implements ShopInterface
 
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['create', 'update', 'delete', 'add'],
+                'only' => ['create', 'update', 'delete', 'add', 'image'],
                 'rules' => [
                     [
                         'allow' => true,
-                        'roles' =>['@'],
+                        'roles' => ['@'],
                     ],
 
                 ],
@@ -51,6 +52,19 @@ class ItemController extends Controller implements ShopInterface
                 ],
             ],
         ];
+    }
+
+    // get images from common/images sub-directory
+    public function actionImage($filename)
+    {
+
+        $filepath = Yii::getAlias("@common") . DIRECTORY_SEPARATOR . "images" . DIRECTORY_SEPARATOR . $filename;
+        if (!file_exists($filepath)) {
+            $filepath = Yii::getAlias("@common") . DIRECTORY_SEPARATOR . "images" . DIRECTORY_SEPARATOR . "error.jpg";
+        }
+
+        return Yii::$app->response->sendFile($filepath);
+
     }
 
     /**
@@ -101,32 +115,37 @@ class ItemController extends Controller implements ShopInterface
         $shopModel = null;
 
         if ($this->current_user_shop_id->shopId) {
-             $shopModel = Shop::findOne(['id' =>$this->current_user_shop_id->shopId]);
-         }
+            $shopModel = Shop::findOne(['id' => $this->current_user_shop_id->shopId]);
+        }
 
-        if (!$shopModel){
+        if (!$shopModel) {
             return $this->actionIndex("Sorry, Access Permission Denied");
         }
 
         $model = new item();
+        $uploadModel = new UploadForm();
 
-        $model ->shopId = $this->current_user_shop_id->shopId;
+        $model->shopId = $this->current_user_shop_id->shopId;
 
-        if ($model->load(Yii::$app->request->post()) ) {
+        if ($model->load(Yii::$app->request->post())) {
 
-            $model->imagename = UploadedFile::getInstance($model, 'imagename');
-            Yii::trace("the image name is : ".$model->imagename, 'debug');
+            $uploadModel->imageFile = UploadedFile::getInstance($uploadModel, 'imageFile');
 
             // save model first, then upload it.
             $model->save();
-            $model->upload();
+
+            $newImageName = $model->id;
+            $uploadModel->upload($newImageName);
+
+            $model->imagename = $newImageName . '.' . $uploadModel->imageFile->extension;
+            $model->save();
 
 
             return $this->redirect(['view', 'id' => $model->id]);
 
         } else {
             return $this->render('create', [
-                'model' => $model, 'shopList' => $this->getShop(),
+                'model' => $model, 'shopList' => $this->getShop(), 'uploadModel' => $uploadModel,
             ]);
         }
     }
@@ -140,20 +159,33 @@ class ItemController extends Controller implements ShopInterface
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $uploadModel = new UploadForm();
 
         if ($model->shopId)
             Yii::trace($this->current_user_shop_id->shopId, 'debug');
 
-        if (!$model->shopId || $this->current_user_shop_id->shopId != $model->shopId){
+        if (!$model->shopId || $this->current_user_shop_id->shopId != $model->shopId) {
             $message = "Sorry, Access Permission Denied, Please try again.";
             return $this->actionIndex($message);
         }
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post())) {
+
+            $uploadModel->imageFile = UploadedFile::getInstance($uploadModel, 'imageFile');
+
+
+            if ($uploadModel->imageFile) {
+                $newImageName = $model->id;
+                $uploadModel->upload($newImageName);
+
+                $model->imagename = $newImageName . '.' . $uploadModel->imageFile->extension;
+                $model->save();
+            }
+
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [
-                'model' => $model, 'shopList' => $this->getShop()
+                'model' => $model, 'shopList' => $this->getShop(), 'uploadModel' => $uploadModel
             ]);
         }
     }
@@ -168,18 +200,19 @@ class ItemController extends Controller implements ShopInterface
     {
         $model = $this->findModel($id);
 
-        if (!$model->shopId || $this->current_user_shop_id->shopId != $model->shopId){
+        if (!$model->shopId || $this->current_user_shop_id->shopId != $model->shopId) {
             return $this->actionIndex("Sorry, Access Permission Denied");
         }
-        $this->$model->delete();
+
+        $model->delete();
 
         return $this->redirect(['index']);
     }
 
 
-
     // get items list by shop model's id
-    public function actionList($message = null) {
+    public function actionList($message = null)
+    {
 
         $isShopOwner = false;
 
@@ -223,7 +256,8 @@ class ItemController extends Controller implements ShopInterface
     /**
      * @return array
      */
-    public function getShop() {
+    public function getShop()
+    {
         $shopList = ArrayHelper::map(Shop::find()->all(), 'id', 'name');
         return $shopList;
     }
@@ -237,7 +271,8 @@ class ItemController extends Controller implements ShopInterface
     }
 
     // get all items in a given shop
-    public function getItemByShopId($shopId) {
+    public function getItemByShopId($shopId)
+    {
 
         return item::find()->where(['shopId' => $shopId]);
 
