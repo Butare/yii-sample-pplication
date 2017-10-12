@@ -59,6 +59,7 @@ class ItemController extends Controller implements ShopInterface
     {
 
         $filepath = Yii::getAlias("@common") . DIRECTORY_SEPARATOR . "images" . DIRECTORY_SEPARATOR . $filename;
+
         if (!file_exists($filepath)) {
             $filepath = Yii::getAlias("@common") . DIRECTORY_SEPARATOR . "images" . DIRECTORY_SEPARATOR . "error.jpg";
         }
@@ -134,10 +135,9 @@ class ItemController extends Controller implements ShopInterface
             // save model first, then upload it.
             $model->save();
 
-            $newImageName = $model->id;
-            $uploadModel->upload($newImageName);
+            $uploadModel->upload($model->id);
 
-            $model->imagename = $newImageName . '.' . $uploadModel->imageFile->extension;
+            $model->imagename = $model->id .'.'. $uploadModel->imageFile->extension;
             $model->save();
 
 
@@ -162,7 +162,6 @@ class ItemController extends Controller implements ShopInterface
         $uploadModel = new UploadForm();
 
         if ($model->shopId)
-            Yii::trace($this->current_user_shop_id->shopId, 'debug');
 
         if (!$model->shopId || $this->current_user_shop_id->shopId != $model->shopId) {
             $message = "Sorry, Access Permission Denied, Please try again.";
@@ -175,10 +174,9 @@ class ItemController extends Controller implements ShopInterface
 
 
             if ($uploadModel->imageFile) {
-                $newImageName = $model->id;
-                $uploadModel->upload($newImageName);
+                $uploadModel->upload($model->id);
 
-                $model->imagename = $newImageName . '.' . $uploadModel->imageFile->extension;
+                $model->imagename = $model->id .'.'. $uploadModel->imageFile->extension;
                 $model->save();
             }
 

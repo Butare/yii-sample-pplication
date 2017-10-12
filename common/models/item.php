@@ -17,6 +17,10 @@ use Yii;
  *
  * @property Shop $shop
  */
+
+define("IMAGE_NAME_LENGTH", 20);
+
+
 class item extends \yii\db\ActiveRecord
 {
 
@@ -89,24 +93,13 @@ class item extends \yii\db\ActiveRecord
     }
 
 
-    // upload image of an item, renamed to the item id
-    public function upload($name)
-    {
-        if ($this->validate()) {
+    // image name length should not be longer than 'IMAGE_NAME_LENGTH = 10'
+    public function trimImageName($name, $ext) {
 
-            $this->imagename->saveAs
-            (
-                Yii::getAlias('@common') .
-                DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR .
-                $name . '.' . $this->imagename->extension
-            );
-
-            Yii::trace("image name upload item  : $name", 'debug');
-
-            return true;
-
-        } else {
-            return false;
+        if (strpos($name, ".") < IMAGE_NAME_LENGTH){
+            return $name;
+        }else {
+            return substr($name, 0, IMAGE_NAME_LENGTH).'.'.$ext;
         }
     }
 
