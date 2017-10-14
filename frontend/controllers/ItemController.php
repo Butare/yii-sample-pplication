@@ -189,7 +189,7 @@ class ItemController extends Controller
         ]);
 
         return $this->render('index', [
-            'dataProvider' => $dataProvider, 'message' => $message, 'isShopOwner' => $isShopOwner , 'imgSrc' =>UploadForm::getImagePath()
+            'dataProvider' => $dataProvider, 'message' => $message, 'isShopOwner' => $isShopOwner,
         ]);
 
     }

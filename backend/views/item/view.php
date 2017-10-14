@@ -7,7 +7,7 @@ use yii\widgets\DetailView;
 /* @var $model app\models\item */
 
 $this->title = $model->name;
-$this->params['breadcrumbs'][] = ['label' => 'Items', 'url' => ['site/home']];
+$this->params['breadcrumbs'][] = ['label' => 'Items', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="item-view">
@@ -44,6 +44,13 @@ $this->params['breadcrumbs'][] = $this->title;
             'imagename',
             'created_at',
             'updated_at',
+            [
+                'attribute' => 'Image name',
+                'format' => 'raw',
+                'value' => function(\common\models\item $item) {
+                    return '<img src="image?filename='.$item->imagename.'" width="50x" height="50px" >';
+                },
+            ],
         ],
     ]) ?>
 

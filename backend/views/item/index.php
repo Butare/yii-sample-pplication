@@ -9,7 +9,7 @@ use yii\grid\ActionColumn;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Items';
-//$this->params['breadcrumbs'][] = $this->title;
+$this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="item-index">
 
@@ -59,7 +59,7 @@ $this->title = 'Items';
             ],
                [
                    'class' => 'yii\grid\ActionColumn',
-                    'visible' => $isShopOwner
+                   'visible' => $isShopOwner,
                ],
 
         ],

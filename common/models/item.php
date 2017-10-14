@@ -3,6 +3,8 @@
 namespace common\models;
 
 use Yii;
+use \yii\web\UploadedFile;
+
 
 /**
  * This is the model class for table "items".
@@ -43,7 +45,7 @@ class item extends \yii\db\ActiveRecord
             [['price'], 'number'],
             [['created_at', 'updated_at'], 'safe'],
             [['name'], 'string', 'max' => 100],
-            [['imagename'], 'string', 'skipOnEmpty' => true, 'max' => 255],
+            [['imagename'], 'file', 'extensions' => ['png', 'jpg', 'gif']],
             [['shopId'], 'exist', 'skipOnError' => true, 'targetClass' => Shop::className(), 'targetAttribute' => ['shopId' => 'id']],
         ];
     }
@@ -91,16 +93,4 @@ class item extends \yii\db\ActiveRecord
     {
         return item::find()->where(['shopId' => $shopId]);
     }
-
-
-    // image name length should not be longer than 'IMAGE_NAME_LENGTH = 10'
-    public function trimImageName($name, $ext) {
-
-        if (strpos($name, ".") < IMAGE_NAME_LENGTH){
-            return $name;
-        }else {
-            return substr($name, 0, IMAGE_NAME_LENGTH).'.'.$ext;
-        }
-    }
-
 }

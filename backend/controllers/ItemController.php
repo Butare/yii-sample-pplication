@@ -4,10 +4,13 @@ namespace backend\controllers;
 
 use backend\models\ShopInterface;
 use common\models\UploadForm;
+use common\models\Utils;
+use SebastianBergmann\CodeCoverage\Util;
 use Yii;
 use common\models\item;
 use common\models\shop;
 use yii\data\ActiveDataProvider;
+use yii\data\Pagination;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -35,7 +38,7 @@ class ItemController extends Controller implements ShopInterface
 
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['create', 'update', 'delete', 'add', 'image'],
+                'only' => ['create', 'update', 'delete', 'add'],
                 'rules' => [
                     [
                         'allow' => true,
@@ -58,10 +61,10 @@ class ItemController extends Controller implements ShopInterface
     public function actionImage($filename)
     {
 
-        $filepath = Yii::getAlias("@common") . DIRECTORY_SEPARATOR . "images" . DIRECTORY_SEPARATOR . $filename;
+        $filepath = Utils::getImagePath(). $filename;
 
         if (!file_exists($filepath)) {
-            $filepath = Yii::getAlias("@common") . DIRECTORY_SEPARATOR . "images" . DIRECTORY_SEPARATOR . "error.jpg";
+            $filepath = Utils::getImagePath(). "error.jpg";
         }
 
         return Yii::$app->response->sendFile($filepath);
@@ -83,6 +86,9 @@ class ItemController extends Controller implements ShopInterface
 
         $dataProvider = new ActiveDataProvider([
             'query' => $this->getItemByShopId($shopId),
+            'pagination' => [
+                'pageSize' => 5,
+            ]
         ]);
 
         return $this->render('index', [
@@ -124,28 +130,24 @@ class ItemController extends Controller implements ShopInterface
         }
 
         $model = new item();
-        $uploadModel = new UploadForm();
 
         $model->shopId = $this->current_user_shop_id->shopId;
 
-        if ($model->load(Yii::$app->request->post())) {
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
 
-            $uploadModel->imageFile = UploadedFile::getInstance($uploadModel, 'imageFile');
+            // get the uploaded image instance
+            $image = UploadedFile::getInstance($model, 'imagename');
 
-            // save model first, then upload it.
+            $image->saveAs(Utils::getImagePath() . $model->id . '.' . $image->extension);
+
+            $model->imagename = $model->id . '.' . $image->extension;
             $model->save();
-
-            $uploadModel->upload($model->id);
-
-            $model->imagename = $model->id .'.'. $uploadModel->imageFile->extension;
-            $model->save();
-
 
             return $this->redirect(['view', 'id' => $model->id]);
 
         } else {
             return $this->render('create', [
-                'model' => $model, 'shopList' => $this->getShop(), 'uploadModel' => $uploadModel,
+                'model' => $model, 'shopList' => $this->getShop(), //'uploadModel' => $uploadModel,
             ]);
         }
     }
@@ -159,31 +161,40 @@ class ItemController extends Controller implements ShopInterface
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        $uploadModel = new UploadForm();
 
-        if ($model->shopId)
-
+        // check if the authenticated user owns the item he/she wants to update
         if (!$model->shopId || $this->current_user_shop_id->shopId != $model->shopId) {
             $message = "Sorry, Access Permission Denied, Please try again.";
             return $this->actionIndex($message);
         }
 
+        // preserve the old name
+        $oldImageName = $model->imagename;
+
         if ($model->load(Yii::$app->request->post())) {
 
-            $uploadModel->imageFile = UploadedFile::getInstance($uploadModel, 'imageFile');
+            // get the uploaded image instance
+            $image = UploadedFile::getInstance($model, 'imagename');
 
+            if (empty($image)) {
+                $model->imagename = $oldImageName;
+            } else {
+                $model->imagename = $model->id . '.' . $image->extension;
+            }
 
-            if ($uploadModel->imageFile) {
-                $uploadModel->upload($model->id);
+            if ($model->save()) {
 
-                $model->imagename = $model->id .'.'. $uploadModel->imageFile->extension;
-                $model->save();
+                // upload image only if valid uploaded image instance found
+                if (!empty($image)) {
+                    $image->saveAs(Utils::getImagePath() . $model->id . '.' . $image->extension);
+                }
+
             }
 
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [
-                'model' => $model, 'shopList' => $this->getShop(), 'uploadModel' => $uploadModel
+                'model' => $model, 'shopList' => $this->getShop(),
             ]);
         }
     }
@@ -226,11 +237,13 @@ class ItemController extends Controller implements ShopInterface
 
         $dataProvider = new ActiveDataProvider([
             'query' => $this->getItemByShopId($shopId),
+            'pagination' => [
+                'pageSize' => 5,
+            ]
         ]);
 
-        return $this->render('index', [
-            'dataProvider' => $dataProvider, 'message' => $message, 'isShopOwner' => $isShopOwner
-        ]);
+        return $this->render('index',
+            ['dataProvider' => $dataProvider, 'message' => $message, 'isShopOwner' => $isShopOwner]);
 
     }
 
@@ -268,10 +281,14 @@ class ItemController extends Controller implements ShopInterface
 
     }
 
-    // get all items in a given shop
+    /**
+     * get all items in a given shop
+     * @param $shopId
+     * @return $this
+     */
+
     public function getItemByShopId($shopId)
     {
-
         return item::find()->where(['shopId' => $shopId]);
 
     }
